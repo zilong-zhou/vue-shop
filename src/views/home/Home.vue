@@ -1,52 +1,51 @@
 <template>
-  <div>
-    <h2>首页</h2>
-    <p>{{$store.state.count}}</p>
-    <button @click="increment">+</button>
-    <button @click="decrement">-</button>
+  <div id="home">
+    <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 
-    <category></category>
-    <p>**********getters***********</p>
-    <p>{{$store.getters.getmore20stu}}</p>
-    <p>**********响应式***********</p>
-    <p>{{$store.state.info}}</p>
-    <button @click="upStuName">修改</button>
+    <home-swiper :banners="banners" />
+    <recommend-view :recommends="recommends"/>
   </div>
 </template>
 
 <script>
-  import Category from '../category/Category'
+
+  import NavBar from "components/common/navbar/NavBar";
+  import HomeSwiper from './childComps/HomeSwiper'
+  import RecommendView from './childComps/RecommendView'
+
+  import {getMultiData} from 'network/home';
 
   export default {
     name: "Home",
-    components: {Category},
-    comments:{
-      Category,
+    components: {
+      RecommendView,
+      NavBar,
+      HomeSwiper
     },
     data() {
       return {
+        banners: [],
+        recommends: []
       }
     },
     methods: {
-      increment() {
-        this.$store.commit("increment")
-      },
-      decrement() {
-        this.$store.commit("decrement")
-      },
-      upStuName() {
-        // this.$store.commit("upStuName")
-        this.$store.dispatch('aUpdateInfo')
-      },
-
 
     },
     computed: {
 
+    },
+    created() {
+      getMultiData().then(res => {
+        this.banners = res.data.data.banner.list;
+        this.recommends = res.data.data.recommend.list;
+      })
     }
   }
 </script>
 
 <style scoped>
-
+  .home-nav {
+    background-color: var(--color-tint);
+    color: #fff;
+  }
 </style>
